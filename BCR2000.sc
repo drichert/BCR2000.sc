@@ -46,6 +46,31 @@ throw
 
 Array.fill(10, {|i| i.postln;})
 (2 + 3).asSymbol;
+
+
+SynthDef(\x, {
+  arg amp = 0.01,
+      freq = 1200,
+      modDepth = 0.7,
+      modFreq = 2
+  ;
+
+  var
+    carrier,
+    modulator   
+  ;
+
+  modulator = SinOsc.ar(modFreq, mul: modDepth);
+  carrier = Saw.ar(freq, add: modulator, mul: amp);
+
+  Out.ar([0,1], carrier)
+}).store; 
+
+
+x = Synth(\x);
+x.set(\modDepth, 1);
+x.set(\modFreq, 64);        
+
 */
 
 
