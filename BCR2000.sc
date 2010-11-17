@@ -1,5 +1,6 @@
 BCR2000 {
   var controls,
+      controlBuses,
       responders
   ;
 
@@ -9,14 +10,20 @@ BCR2000 {
     
   init {
     controls = Dictionary.new(108);
+    controlBuses = Dictionary.new(108);
+
     this.createCCResponders;
   }
 
   createCCResponders {
     responders = Array.fill(108, {|i|
       CCResponder({|src, chan, num, val|
-        // [src, chan, num, val].postln;
+        // Write to controls 
         controls.put(i + 1, val);
+
+        // Write to bus (converted to scalar 0..1)
+        controlBuses.put(i + 1, Bus.control(Server.default));
+        controlBuses.at(i + 1).value = val / 127;
       },
         // Adjust values as/if needed
         nil, // src
@@ -27,13 +34,25 @@ BCR2000 {
     });
   }
 
+  // Value from BCR
   at {arg controlNum;
     ^controls.at(controlNum)
   }
 
+  // Convert to 0..1
   scalarAt {arg controlNum; 
     ^controls.at(controlNum) / 127
   }
+
+  // Get a bus
+  busAt {arg controlNum;
+    ^controlBuses.at(controlNum)
+  }
+
+  /*
+  busRangeAt(arg controlNum, lo, hi;
+    (hi - lo) * 
+  */
 }
 
 /* Scratch
@@ -69,7 +88,9 @@ SynthDef(\x, {
 
 x = Synth(\x);
 x.set(\modDepth, 1);
-x.set(\modFreq, 64);        
+x.set(\modFreq, 64); 
+
+x.map(\modFreq, b.busAt(       
 
 */
 
