@@ -1,6 +1,7 @@
 BCR2000 {
   var controls,
       controlBuses,
+      rangedControlBuses,
       responders
   ;
 
@@ -11,6 +12,7 @@ BCR2000 {
   init {
     controls = Dictionary.new(108);
     controlBuses = Dictionary.new(108);
+    rangedControlBuses = Dictionary.new(108);
 
     this.createCCResponders;
   }
@@ -18,6 +20,8 @@ BCR2000 {
   createCCResponders {
     responders = Array.fill(108, {|i|
       CCResponder({|src, chan, num, val|
+        [src, chan, num, val].postln;
+
         // Write to controls 
         controls.put(i + 1, val);
 
@@ -51,7 +55,16 @@ BCR2000 {
 
   /*
   busRangeAt(arg controlNum, lo, hi;
-    (hi - lo) * 
+    if (rangedControlBuses.at(controlNum).isNil, {
+      rangedControlBuses.put(controlNum, Bus.control(Server.default))
+    }); 
+   
+    // Left to right order of operations
+    //rangedControlBuses.put(
+    bus.value = hi - lo * controls.at(controlNum) + lo;
+
+    ^bus
+  }
   */
 }
 
@@ -62,7 +75,8 @@ b.at(4);
 b.scalarAt(4);
 b.controls[5].get;
 throw
-
+z = Dictionary.new(2);
+z.at(\1);
 Array.fill(10, {|i| i.postln;})
 (2 + 3).asSymbol;
 
@@ -92,6 +106,9 @@ x.set(\modFreq, 64);
 
 x.map(\modFreq, b.busAt(       
 
+
+
+ControlSpec
 */
 
 
